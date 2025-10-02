@@ -1,0 +1,47 @@
+{
+  "stores": {
+    "elegantoctopus": {
+      "name": "elegantoctopus",
+      "search_url": "https://elegantoctopus.tcgplayerpro.com/api/catalog/search",
+      "inventory_url": "https://elegantoctopus.tcgplayerpro.com/api/inventory/skus",
+      "type": "tcgplayer_pro",
+      "headers": {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      },
+      "search_payload": {
+        "query": "{card_name}",
+        "context": null,
+        "filters": {},
+        "from": 0,
+        "size": 5,
+        "sort": [
+          {
+            "field": "in-stock-price-sort",
+            "order": "asc"
+          }
+        ]
+      }
+    },
+    "laughingdragonmtg": {
+      "name": "Laughing Dragon MTG",
+      "search_url": "https://api.conductcommerce.com/v1/advancedSearch",
+      "type": "conductcommerce",
+      "headers": {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      },
+      "search_payload": {
+        "productTypeID": 1,
+        "name": "{card_name}",
+        "language": ["English"],
+        "host": "laughingdragonmtg.com"
+      }
+    }
+  },
+  "output_settings": {
+    "max_results_per_card": 3,
+    "sort_by_price": true,
+    "min_condition": "Near Mint"
+  }
+}
