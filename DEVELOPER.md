@@ -322,6 +322,13 @@ self.send_header('Access-Control-Allow-Headers', 'Content-Type')
 3. **Invalid Card Names**: Return 'n/a' (not treated as error)
 4. **Cold Start Delays**: First request after inactivity slower
 
+## Local Testing Workflow
+
+1. **macOS/Linux**: Run `./scripts/local_test_mac.sh [port]` (default port `8000`). The script installs Python dependencies, verifies store configuration via a smoke test, and serves the static site at `http://127.0.0.1:<port>`.
+2. **Windows**: Run `powershell -ExecutionPolicy Bypass -File scripts/local_test_windows.ps1 -Port 8000`. The script mirrors the macOS workflow using PowerShell.
+3. **Browser Test**: Navigate to the local server URL and exercise core flows (card entry, store selection, CSV export). Use the browser console to confirm API calls reach the configured backend.
+4. **Shutdown**: Press `Ctrl+C` in the terminal when finished to stop the local server.
+
 ## Extension Points
 
 ### Adding New Stores
