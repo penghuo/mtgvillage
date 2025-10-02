@@ -1,18 +1,7 @@
 {
   "functions": {
     "api/*.py": {
-      "runtime": "python3.9"
+      "runtime": "python@3.9"
     }
-  },
-  "build": {
-    "env": {
-      "PYTHONPATH": "/var/task"
-    }
-  },
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
-    }
-  ]
+  }
 }
