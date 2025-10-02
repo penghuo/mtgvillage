@@ -23,25 +23,26 @@ Serverless web app for comparing Magic: The Gathering card prices across multipl
 
 ### macOS/Linux
 ```bash
-./scripts/local_test_mac.sh [port]
+./scripts/local_test_mac.sh [frontend_port] [backend_port]
 ```
 - Installs `requirements.txt`
 - Runs a backend smoke test to confirm configured stores
-- Serves the site at `http://127.0.0.1:[port]` (defaults to `8000`)
+- Starts the local API at `http://127.0.0.1:[backend_port]` (default `3000`)
+- Serves the site at `http://127.0.0.1:[frontend_port]` (default `8000`)
 
 ### Windows
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/local_test_windows.ps1 -Port 8000
+powershell -ExecutionPolicy Bypass -File scripts/local_test_windows.ps1 -Port 8000 -BackendPort 3000
 ```
 - Mirrors the macOS workflow using PowerShell
-- Stops with `Ctrl+C`
+- Stops both API and static servers with `Ctrl+C`
 
 ### Browser Check
-1. Open the URL printed by the script.
+1. Open the static site URL printed by the script.
 2. Enter sample card names, choose stores, and run a price check.
-3. Use browser dev tools to confirm calls to `/api/stores` and `/api/check-prices` succeed.
+3. Use browser dev tools to confirm calls to "/api/stores" and "/api/check-prices" hit the local API port.
 
-> Tip: When testing against production APIs, ensure `API_BASE_URL` in `assets/js/app.js` points to your deployed Vercel URL. The scripts assume the backend is reachable at `http://localhost:3000`.
+> Tip: When testing against production APIs, point `API_BASE_URL` in `assets/js/app.js` at your deployed Vercel URL. For local-only testing, the scripts set expectations that the API is reachable at the backend port you choose (default `3000`).
 
 ## Project Structure
 ```
@@ -49,6 +50,9 @@ mtgvillage/
 ├── api/                  # Python serverless endpoints
 ├── assets/               # Static CSS/JS assets
 ├── scripts/              # Shared backend logic + helper scripts
+│   ├── config.json
+│   ├── local_backend_server.py
+│   └── mtg_price_checker.py
 ├── index.html            # Frontend entry point
 ├── requirements.txt      # Python dependencies
 ├── vercel.json           # Vercel configuration
@@ -66,6 +70,7 @@ mtgvillage/
 - **Store returns `n/a`**: Indicates the external store API timed out or the card name could not be found.
 - **Local script fails**: Make sure Python 3.9+ and pip are installed and accessible from the terminal.
 - **Static server unavailable**: Check if another process is using the requested port; pass a different port to the script.
+- **Local API port in use**: Provide an alternate backend port (second argument on macOS/Linux, `-BackendPort` on Windows).
 
 ## License
 Apache License 2.0. See `LICENSE` for the full text.

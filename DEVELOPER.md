@@ -324,10 +324,11 @@ self.send_header('Access-Control-Allow-Headers', 'Content-Type')
 
 ## Local Testing Workflow
 
-1. **macOS/Linux**: Run `./scripts/local_test_mac.sh [port]` (default port `8000`). The script installs Python dependencies, verifies store configuration via a smoke test, and serves the static site at `http://127.0.0.1:<port>`.
-2. **Windows**: Run `powershell -ExecutionPolicy Bypass -File scripts/local_test_windows.ps1 -Port 8000`. The script mirrors the macOS workflow using PowerShell.
-3. **Browser Test**: Navigate to the local server URL and exercise core flows (card entry, store selection, CSV export). Use the browser console to confirm API calls reach the configured backend.
-4. **Shutdown**: Press `Ctrl+C` in the terminal when finished to stop the local server.
+1. **macOS/Linux**: Run `./scripts/local_test_mac.sh [frontend_port] [backend_port]`. Defaults are `8000` for the static site and `3000` for the API. The script installs Python dependencies, verifies store configuration via a smoke test, starts the local API, and serves the static site.
+2. **Windows**: Run `powershell -ExecutionPolicy Bypass -File scripts/local_test_windows.ps1 -Port 8000 -BackendPort 3000`. Adjust the ports if the defaults are already in use.
+3. **Browser Test**: Navigate to the static site URL and exercise core flows (card entry, store selection, CSV export). Use browser dev tools to confirm API calls target `/api/*` on the backend port.
+4. **Shutdown**: Press `Ctrl+C` to stop both servers. The scripts automatically clean up the API process.
+5. **Port Conflicts**: If the script reports "Address already in use", re-run with alternate port values (for example `./scripts/local_test_mac.sh 8080 3100`).
 
 ## Extension Points
 
