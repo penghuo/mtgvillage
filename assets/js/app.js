@@ -10,6 +10,8 @@ const API_BASE_URL = window.location.hostname === 'localhost' || window.location
 let availableStores = [];
 let currentResults = [];
 let currentTable = null;
+let progressInterval = null;
+let progressValue = 0;
 
 // Initialize application when document is ready
 $(document).ready(function() {
@@ -132,6 +134,69 @@ function parseCardInput(text) {
         });
 }
 
+function resetProgressBar() {
+    if (progressInterval) {
+        clearInterval(progressInterval);
+        progressInterval = null;
+    }
+    progressValue = 0;
+    const $bar = $('#loadingProgressBar');
+    $bar.removeClass('bg-success bg-danger');
+    if (!$bar.hasClass('progress-bar-animated')) {
+        $bar.addClass('progress-bar-animated');
+    }
+    $bar.css('width', '0%').attr('aria-valuenow', 0).text('0%');
+    $('#loadingProgressText').text('');
+}
+
+function startProgressBar(cardCount) {
+    resetProgressBar();
+    const total = Math.max(cardCount, 1);
+    const step = Math.max(2, Math.floor(70 / total));
+    const interval = Math.max(250, Math.min(800, total * 150));
+    $('#loadingProgressText').text(`Checking ${total} card${total !== 1 ? 's' : ''}...`);
+    progressInterval = setInterval(() => {
+        if (progressValue < 90) {
+            progressValue = Math.min(90, progressValue + step);
+            updateProgressBar(progressValue);
+        } else {
+            progressValue = Math.min(95, progressValue + 1);
+            updateProgressBar(progressValue);
+        }
+    }, interval);
+}
+
+function updateProgressBar(value, label) {
+    const clamped = Math.max(0, Math.min(100, Math.round(value)));
+    const $bar = $('#loadingProgressBar');
+    $bar.css('width', `${clamped}%`).attr('aria-valuenow', clamped).text(`${clamped}%`);
+    if (label) {
+        $('#loadingProgressText').text(label);
+    }
+}
+
+function completeProgressBar(message = 'Completed') {
+    if (progressInterval) {
+        clearInterval(progressInterval);
+        progressInterval = null;
+    }
+    const $bar = $('#loadingProgressBar');
+    $bar.removeClass('progress-bar-animated bg-danger').addClass('bg-success');
+    progressValue = 100;
+    updateProgressBar(progressValue, message);
+}
+
+function failProgressBar(message = 'Failed') {
+    if (progressInterval) {
+        clearInterval(progressInterval);
+        progressInterval = null;
+    }
+    const $bar = $('#loadingProgressBar');
+    $bar.removeClass('progress-bar-animated bg-success').addClass('bg-danger');
+    progressValue = 100;
+    updateProgressBar(progressValue, message);
+}
+
 // Update card count display
 function updateCardCount() {
     const text = $('#cardNames').val();
@@ -168,6 +233,7 @@ async function checkPrices() {
     
     // Show loading state
     showLoading();
+    startProgressBar(normalizedCards.length);
     
     try {
         const response = await fetch(`${API_BASE_URL}/api/check-prices`, {
@@ -184,13 +250,16 @@ async function checkPrices() {
         const data = await response.json();
         
         if (data.success) {
+            completeProgressBar('Finished');
             currentResults = data.results;
             displayResults(data.results, data.summary, data.selected_stores);
         } else {
+            failProgressBar('Request failed');
             showError(data.error);
         }
     } catch (error) {
         console.error('Error checking prices:', error);
+        failProgressBar('Request failed');
         if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
             showError('Failed to connect to API. Please check your internet connection and API configuration.');
         } else {
@@ -406,24 +475,11 @@ function exportToCsv() {
     document.body.removeChild(link);
 }
 
-// Load sample cards for testing
-function loadSampleCards() {
-    const sampleCards = [
-        'Sol Ring',
-        'Lightning Bolt',
-        'Swiftfoot Boots',
-        'Command Tower',
-        'Counterspell'
-    ].join('\n');
-    
-    $('#cardNames').val(sampleCards);
-    updateCardCount();
-}
-
 // UI state management functions
 function showLoading() {
     hideAllStates();
     $('#loadingState').removeClass('d-none');
+    resetProgressBar();
 }
 
 function showError(message) {
