@@ -4,7 +4,7 @@
 // Configuration - Update this with your Vercel app URL after deployment
 const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
     ? 'http://localhost:3000' 
-    : 'https://YOUR_VERCEL_APP_URL_HERE.vercel.app';
+    : 'https://mtgvillage.vercel.app';
 
 // Global variables
 let availableStores = [];
