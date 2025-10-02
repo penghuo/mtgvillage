@@ -116,10 +116,26 @@ function setupEventHandlers() {
     $('#exportCsvBtn').on('click', exportToCsv);
 }
 
+// Normalize card input into clean card name list
+function parseCardInput(text) {
+    return text
+        .split('\n')
+        .map(line => line.trim())
+        .filter(line => line.length > 0)
+        .map(line => {
+            const quantityMatch = line.match(/^(\d+)\s+(.*)$/);
+            if (quantityMatch) {
+                const name = quantityMatch[2].trim();
+                return name.length > 0 ? name : line;
+            }
+            return line;
+        });
+}
+
 // Update card count display
 function updateCardCount() {
     const text = $('#cardNames').val();
-    const lines = text.split('\n').filter(line => line.trim().length > 0);
+    const lines = parseCardInput(text);
     $('#cardCount').text(lines.length);
 }
 
@@ -134,11 +150,13 @@ function getSelectedStores() {
 
 // Main price checking function
 async function checkPrices() {
-    const cardText = $('#cardNames').val().trim();
+    const rawCardText = $('#cardNames').val();
+    const normalizedCards = parseCardInput(rawCardText);
+    const cardText = normalizedCards.join('\n');
     const selectedStores = getSelectedStores();
     
     // Validation
-    if (!cardText) {
+    if (normalizedCards.length === 0) {
         showError('Please enter some card names');
         return;
     }
