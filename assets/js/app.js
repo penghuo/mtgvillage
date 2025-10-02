@@ -1,4 +1,4 @@
-// MTG Price Checker Web Application - Frontend JavaScript
+// MTG Village Web Application - Frontend JavaScript
 // Adapted for Vercel Serverless Functions
 
 // Configuration - Update this with your Vercel app URL after deployment
@@ -13,7 +13,7 @@ let currentTable = null;
 
 // Initialize application when document is ready
 $(document).ready(function() {
-    console.log('MTG Price Checker Web App loaded');
+    console.log('MTG Village Web App loaded');
     console.log('API Base URL:', API_BASE_URL);
     
     // Show API URL notice if not configured
@@ -432,5 +432,5 @@ function escapeHtml(text) {
 }
 
 // Console log for debugging
-console.log('MTG Price Checker app.js loaded successfully');
+console.log('MTG Village app.js loaded successfully');
 console.log('Remember to update API_BASE_URL after Vercel deployment!');
